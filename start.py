@@ -3,9 +3,9 @@ import tictactoe
 import pong
 window = tk.Tk()
 
-window.title("Bilkke Window")
+window.title("Bilke Window")
 window.geometry('350x200')
-lbl = tk.Label(window, text="Select Games")
+lbl = tk.Label(window, text="Select a Game")
 lbl.grid(column=0, row=0)
 
 
@@ -16,7 +16,7 @@ def pong_start():
 
 btn = tk.Button(window, text="Tic Tac Toe", command=tictacstart)
 btn.grid(column=0, row=1)
-btn = tk.Button(window, text="Ping Pong", command=pong_start)
+btn = tk.Button(window, text="Pong", command=pong_start)
 btn.grid(column=1, row=1)
 window.mainloop()
 
