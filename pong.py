@@ -120,7 +120,6 @@ class Pong:
         self.screen = pygame.display.set_mode(self.size)
         BTN_ONEPLAYER = Text(self.screen, red, "One player", self.width//2-100, self.height//2-100)
         BTN_TWOPLAYERS = Text(self.screen, blue, "Two players", self.width // 2-100, self.height // 2-100 + 80)
-
         BTN_CHANGE_INPUT = Text(self.screen, blue, "Setup input", self.width // 2-100, self.height // 2-100 + 160)
 
         choose =1

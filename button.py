@@ -2,7 +2,7 @@ import pygame
 green = (0, 255, 0)
 class Text:
     def __init__(self,screen,color,text,posx,posy,fontsize=30):
-        myfont = pygame.font.SysFont('Comic Sans MS',fontsize)
+        myfont = pygame.font.Font('slkscr.ttf', fontsize)
         self.textsurface = myfont.render(text,False,color)
         self.screen = screen
         self.posx, self.posy = posx,posy
