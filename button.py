@@ -6,7 +6,8 @@ class Text:
         self.textsurface = myfont.render(text,False,color)
         self.screen = screen
         self.posx, self.posy = posx,posy
-        self.rect = pygame.Rect(self.posx, self.posy,self.textsurface.get_size()[0],self.textsurface.get_size()[1] )
+        w,h = self.textsurface.get_size()
+        self.rect = pygame.Rect(self.posx, self.posy,w,h )
 
     def update(self):
 

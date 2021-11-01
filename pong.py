@@ -107,6 +107,23 @@ class Player:
             self.move()
 
 
+def player_move(player):
+    if not player.freeze and player.moving != 0:
+        player.move()
+
+
+def player_stop_or_other_direction(player, oppositekey, up):
+    player.stop()
+    keys = pygame.key.get_pressed()
+    if keys[oppositekey]:
+        player.start()
+        if up:
+            player.moving = 1
+        else:
+            player.moving = -1
+        player_move(player)
+
+
 class Pong:
     def __init__(self):
         self.p1_key_up = pygame.K_e
@@ -118,6 +135,10 @@ class Pong:
         self.size = self.width, self.height = 1100, 700
         pygame.init()
         self.screen = pygame.display.set_mode(self.size)
+
+        self.start_screen()
+
+    def start_screen(self):
         BTN_ONEPLAYER = Text(self.screen, red, "One player", self.width//2-100, self.height//2-100)
         BTN_TWOPLAYERS = Text(self.screen, blue, "Two players", self.width // 2-100, self.height // 2-100 + 80)
         BTN_CHANGE_INPUT = Text(self.screen, blue, "Setup input", self.width // 2-100, self.height // 2-100 + 160)
@@ -151,10 +172,6 @@ class Pong:
                         self.p2_key_up = self.get_key(2, "up")
                         self.p2_key_down = self.get_key(2, "down")
 
-
-
-
-
     def get_key(self,player,movement):
         self.screen.fill(black)
         up_key_p1 = Text(self.screen, white, "Press key to setup Player {} movement {}".format(player,movement.upper()), 100, 100)
@@ -166,22 +183,45 @@ class Pong:
                 if event.type == pygame.KEYDOWN:
                     return event.key
 
-    def player_move(self, player):
-        if not player.freeze:
-            if player.moving != 0:
-                player.move()
+    def draw_line(self,pos1,pos2,width,parts,vertical=False):
+        x = pos1[0]
+        y = pos1[1]
+        border = pos2
 
+        if vertical:
+            distance_x = 0
+            distance_y = abs(pos2[1]-pos1[1])//parts
+            use = y
+            border = border[1]
+        else:
+            distance_x = abs(pos2[0]-pos1[0])//parts
+            distance_y = 0
+            use = x
+            border = border[0]
 
-    def player_stop_or_other_direction(self,player,oppositekey,up):
-        player.stop()
-        keys = pygame.key.get_pressed()
-        if keys[oppositekey]:
-            player.start()
-            if up:
-                player.moving = 1
-            else:
-                player.moving = -1
-            self.player_move(player)
+        while border >= use+distance_y+distance_x:
+            pos1 =(pos1[0] , pos1[1])
+            pygame.draw.line(self.screen,white,pos1,(pos1[0]+distance_x,pos1[1]+distance_y),width)
+            pos1 = (pos1[0]+(distance_x*2), pos1[1]+(distance_y*2))
+            use = pos1[0] if not vertical else pos1[1]
+        if vertical:
+            distance_y = border - pos1[1]
+        else:
+            distance_x = border - pos1[0]
+        pygame.draw.line(self.screen, white, pos1, (pos1[0] + distance_x, pos1[1] + distance_y), width)
+
+    def draw_game_border(self):
+        game_rect = pygame.Rect(20, 50, self.width - 40, self.height - 100)
+        self.draw_line(game_rect.topleft,game_rect.topright,3,60)
+        self.draw_line(game_rect.bottomleft, game_rect.bottomright, 3, 60)
+        self.draw_line(game_rect.topleft,game_rect.bottomleft,3,50,True)
+        self.draw_line(game_rect.topright, game_rect.bottomright, 3, 60, True)
+        middle_x = game_rect.topleft[0] + ((game_rect.topright[0]-game_rect.topleft[0])//2)
+        middle_y = game_rect.topleft[1]
+
+        middle_x1=middle_x
+        middle_y1 =middle_y+game_rect.size[1]
+        self.draw_line((middle_x,middle_y),(middle_x1,middle_y1), 3, 60, True)
 
     def play(self):
         game = 1
@@ -194,7 +234,8 @@ class Pong:
         while game:
             self.screen.fill(black)
 
-            pygame.draw.rect(self.screen, white, (20, 50, self.width - 40, self.height - 100), 3, 3)
+            self.draw_game_border()
+
             ball.update()
             player1.update()
             player2.update()
@@ -202,8 +243,8 @@ class Pong:
             if self.oneplayer and player1.rect.colliderect(ball.rect) or target.colliderect(pygame.Rect(player1.rect[0],player1.rect[1]+20,player1.rect[2],30)):
                 player1.stop()
 
-            self.player_move(player2)
-            self.player_move(player1)
+            player_move(player2)
+            player_move(player1)
 
             if ball.rect.colliderect(player1.rect) or ball.rect.colliderect(player2.rect):
                 ball.bounce()
@@ -238,13 +279,13 @@ class Pong:
                         player2.moving = -1
                 if event.type == pygame.KEYUP:
                     if not self.oneplayer and event.key == self.p1_key_up and player1.moving == 1:
-                        self.player_stop_or_other_direction(player1,self.p1_key_down,0)
+                        player_stop_or_other_direction(player1,self.p1_key_down,0)
                     if not self.oneplayer and event.key == self.p1_key_down and player1.moving == -1:
-                        self.player_stop_or_other_direction(player1,self.p1_key_up,1)
+                        player_stop_or_other_direction(player1,self.p1_key_up,1)
                     if event.key == self.p2_key_up and player2.moving == 1:
-                        self.player_stop_or_other_direction(player2, self.p2_key_down, 0)
+                        player_stop_or_other_direction(player2, self.p2_key_down, 0)
                     if event.key == self.p2_key_down and player2.moving == -1:
-                        self.player_stop_or_other_direction(player2, self.p2_key_up, 1)
+                        player_stop_or_other_direction(player2, self.p2_key_up, 1)
 
             self.clock.tick(self.FPS)
 
