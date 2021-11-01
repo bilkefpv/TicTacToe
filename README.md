@@ -1,5 +1,9 @@
+# Bilke Games
+Games built for fun with pygame
+# Pong
+
 # TicTacToe
-Tic Tac Toe game built with pygame  
+
 
 ![Screenshot](tictactoe.png)  
 
