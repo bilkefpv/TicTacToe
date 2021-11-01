@@ -158,3 +158,6 @@ class TICTACTOE:
 
 if __name__ == "__main__":
     TICTACTOE()
+
+def start():
+    TICTACTOE()

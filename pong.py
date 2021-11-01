@@ -1,10 +1,11 @@
-import pygame, time, threading,random
+import pygame
 
 white = (255, 255, 255)
 black = (0, 0, 0)
 red = (255, 0, 0)
 green = (0, 255, 0)
 blue = (0, 0, 255)
+
 
 class Ball:
     def __init__(self,size,screen):
@@ -34,12 +35,11 @@ class Ball:
         self.pos_x += self.velocity[0]
 
 
-
-class player:
+class Player:
     def __init__(self, screen, player, size):
         self.w,self.h = size
         self.screen = screen
-        self.factor_speed = 1
+        self.factor_speed =4
         self.moving = 0
         if player == 1:
             self.position = (60, self.h//2  , 10, 70)
@@ -48,63 +48,69 @@ class player:
 
         self.rect = pygame.Rect(self.position[0], self.position[1], 10, 70)
         self.update()
+        self.freeze = 0
 
 
     def update(self):
+
         pygame.draw.rect(self.screen, white, self.position, 5, 3)
 
     def start(self):
         self.freeze = 0
+
     def stop(self):
         self.freeze = 1
         self.moving = 0
-    def move(self, up):
-        while not self.freeze:
-            if up:
-                self.moving = 1
-                move_by_size = -self.factor_speed
-            else:
-                self.moving = -1
-                move_by_size = self.factor_speed
 
-            if self.position[1] + move_by_size < 65:
-                move_by_size = 0
-            if self.position[1] + move_by_size > self.h - 140:
-                move_by_size = 0
+    def move(self):
+        if self.moving == 1:
+            move_by_size = -self.factor_speed
+        elif self.moving == -1:
+            move_by_size = self.factor_speed
+        else:
+            return
 
-            self.position = (self.position[0], self.position[1] + move_by_size, 10, 70)
-            self.rect = pygame.Rect(self.position[0], self.position[1], 10, 70)
-            self.update()
-            time.sleep(0.001)
+        if self.position[1] + move_by_size < 56:
+            move_by_size = 0
+        if self.position[1] + move_by_size > self.h - 125:
+            move_by_size = 0
 
+        self.position = (self.position[0], self.position[1] + move_by_size, 10, 70)
+        self.rect = pygame.Rect(self.position[0], self.position[1], 10, 70)
+        self.update()
 
 
-
-class pingpong:
+class Pong:
     def __init__(self):
         self.FPS = 120
         self.clock = pygame.time.Clock()
-        self.size = self.width, self.height = 1100, 600
+        self.size = self.width, self.height = 1100, 700
         pygame.init()
         self.screen = pygame.display.set_mode(self.size)
         self.play()
 
-    def player_move(self, player, up):
-        player.start()
-        thread = threading.Thread(target=player.move, args=(up,))
-        thread.start()
+    def player_move(self, player):
+        if not player.freeze:
+            if player.moving == 1:
+                player.move()
+            if player.moving == -1:
+                player.move()
 
     def player_stop_or_other_direction(self,player,oppositekey,up):
         player.stop()
         keys = pygame.key.get_pressed()
         if keys[oppositekey]:
-            time.sleep(0.1)
-            self.player_move(player, up)
+            player.start()
+            if up:
+                player.moving = 1
+            else:
+                player.moving = -1
+            self.player_move(player)
 
     def play(self):
         game = 1
-        player1 = player(screen=self.screen, player=1, size= self.size)
-        player2 = player(screen=self.screen, player=2, size= self.size)
+        player1 = Player(screen=self.screen, player=1, size= self.size)
+        player2 = Player(screen=self.screen, player=2, size= self.size)
         size = self.width - 40, self.height - 100
         ball = Ball(size, self.screen)
 
@@ -114,6 +120,9 @@ class pingpong:
             ball.start()
             player1.update()
             player2.update()
+            self.player_move(player1)
+            self.player_move(player2)
+
             pygame.display.update()
 
             if ball.rect.colliderect(player1.rect) or ball.rect.colliderect(player2.rect):
@@ -127,13 +136,17 @@ class pingpong:
                     break
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_e and player1.moving == 0:
-                        self.player_move(player1, 1)
+                        player1.start()
+                        player1.moving = 1
                     if event.key == pygame.K_d and player1.moving == 0:
-                        self.player_move(player1, 0)
+                        player1.start()
+                        player1.moving = -1
                     if event.key == pygame.K_o and player2.moving == 0:
-                        self.player_move(player2, 1)
+                        player2.start()
+                        player2.moving = 1
                     if event.key == pygame.K_l and player2.moving == 0:
-                        self.player_move(player2, 0)
+                        player2.start()
+                        player2.moving = -1
                 if event.type == pygame.KEYUP:
                     if event.key == pygame.K_e and player1.moving == 1:
                         self.player_stop_or_other_direction(player1,pygame.K_d,0)
@@ -147,4 +160,7 @@ class pingpong:
             self.clock.tick(self.FPS)
 
 if __name__ == "__main__":
-    pingpong()
+    Pong()
+
+def start():
+    Pong()
