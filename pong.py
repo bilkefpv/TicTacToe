@@ -41,6 +41,11 @@ class Ball:
         OFFSETY =50
         self.pos_x += self.velocity[0]
         self.pos_y += self.velocity[1]
+        val = 0
+        if self.pos_x + self.block_size > self.w - OFFSETX+20:
+            val = 2
+        if self.pos_x + self.block_size < OFFSETX+20:
+            val= 1
         if self.pos_x + self.block_size > self.w+OFFSETX or self.pos_x < 0+ OFFSETX:
             self.velocity[0] = -self.velocity[0]
 
@@ -49,6 +54,7 @@ class Ball:
 
         self.rect = pygame.Rect(self.pos_x, self.pos_y, self.block_size, self.block_size)
         pygame.draw.rect(self.screen, white, self.rect )
+        return val
     def bounce(self):
         self.velocity[0] = -self.velocity[0]
         self.pos_x += self.velocity[0]
@@ -56,6 +62,7 @@ class Ball:
 
 class Player:
     def __init__(self, screen, player, size):
+        self.score=0
         self.w,self.h = size
         self.screen = screen
         self.factor_speed =4
@@ -69,6 +76,8 @@ class Player:
         self.update()
         self.freeze = 0
 
+    def point(self):
+        self.score += 1
 
     def update(self):
 
@@ -132,7 +141,7 @@ class Pong:
         self.p2_key_down =pygame.K_l
         self.FPS = 120
         self.clock = pygame.time.Clock()
-        self.size = self.width, self.height = 1100, 700
+        self.size = self.width, self.height = 900, 700
         pygame.init()
         self.screen = pygame.display.set_mode(self.size)
 
@@ -161,16 +170,28 @@ class Pong:
                     if BTN_ONEPLAYER.check_click(mouse_pos):
                         self.oneplayer = True
                         self.play()
-                        return
+
                     elif BTN_TWOPLAYERS.check_click(mouse_pos):
                         self.oneplayer = False
                         self.play()
-                        return
+
                     elif BTN_CHANGE_INPUT.check_click(mouse_pos):
-                        self.p1_key_up = self.get_key(1,"up")
-                        self.p1_key_down = self.get_key(1, "down")
-                        self.p2_key_up = self.get_key(2, "up")
-                        self.p2_key_down = self.get_key(2, "down")
+                        if (p:=self.get_key(1,"up")) != -1:
+                            self.p1_key_up = p
+                        else:
+                            break
+                        if (p:=self.get_key(1, "down")) != -1:
+                            self.p1_key_down = p
+                        else:
+                            break
+                        if (p:=self.get_key(2, "up")) != -1:
+                            self.p2_key_up = p
+                        else:
+                            break
+                        if (p:=self.get_key(2, "down")) != -1:
+                            self.p2_key_down = p
+                        else:
+                            break
 
     def get_key(self,player,movement):
         self.screen.fill(black)
@@ -180,6 +201,8 @@ class Pong:
         setup = 1
         while setup:
             for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    return -1
                 if event.type == pygame.KEYDOWN:
                     return event.key
 
@@ -219,14 +242,15 @@ class Pong:
         middle_x = game_rect.topleft[0] + ((game_rect.topright[0]-game_rect.topleft[0])//2)
         middle_y = game_rect.topleft[1]
 
+
         middle_x1=middle_x
         middle_y1 =middle_y+game_rect.size[1]
         self.draw_line((middle_x,middle_y),(middle_x1,middle_y1), 3, 60, True)
 
-    def play(self):
+    def play(self,player1=0,player2=0):
         game = 1
-        player1 = Player(screen=self.screen, player=1, size= self.size)
-        player2 = Player(screen=self.screen, player=2, size= self.size)
+        player1 = Player(screen=self.screen, player=1, size= self.size) if not player1 else player1
+        player2 = Player(screen=self.screen, player=2, size= self.size) if not player2 else player2
 
         size = self.width - 40, self.height - 100
         ball = Ball(size, self.screen)
@@ -236,7 +260,21 @@ class Pong:
 
             self.draw_game_border()
 
-            ball.update()
+            if (b:=ball.update())==1:
+                player2.point()
+                self.play(player1,player2)
+                return
+
+            elif b == 2:
+                player1.point()
+                self.play(player1,player2)
+                return
+            TEXT_SCORE_PLAYER1 = Text(self.screen, white, str(player1.score), self.width // 5, 20)
+            TEXT_SCORE_PLAYER2 = Text(self.screen, white, str(player2.score), (self.width // 5) * 4, 20)
+
+            TEXT_SCORE_PLAYER1.update()
+            TEXT_SCORE_PLAYER2.update()
+
             player1.update()
             player2.update()
 
@@ -261,7 +299,6 @@ class Pong:
             for event in pygame.event.get():
 
                 if event.type == pygame.QUIT:
-                    pygame.quit()
                     game = 0
                     break
                 if event.type == pygame.KEYDOWN:
