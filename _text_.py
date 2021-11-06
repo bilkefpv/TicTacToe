@@ -3,7 +3,8 @@ from _imports_ import *
 class Text:
     def __init__(self,screen,color,text,posx,posy,fontsize=30):
         self.text = text
-        self.myfont = pygame.font.Font('slkscr.ttf', fontsize)
+
+        self.myfont = pygame.font.Font("slkscr.ttf", fontsize)
         self.textsurface = self.myfont.render(text,False,color)
         self.screen = screen
         self.posx, self.posy = posx,posy
