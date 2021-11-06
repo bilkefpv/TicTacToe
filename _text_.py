@@ -1,4 +1,4 @@
-from imports import *
+from _imports_ import *
 
 class Text:
     def __init__(self,screen,color,text,posx,posy,fontsize=30):

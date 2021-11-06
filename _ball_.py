@@ -1,4 +1,4 @@
-from imports import *
+from _imports_ import *
 class Ball:
     def __init__(self, size, screen, wheel):
         self.channel = pygame.mixer.find_channel(True)

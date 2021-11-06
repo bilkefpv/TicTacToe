@@ -1,8 +1,8 @@
-from imports import *
-from text import Text
-from wheel import Wheel
-from ball import Ball
-from panel import Player_Panel
+from _imports_ import *
+from _text_ import Text
+from _wheel_ import Wheel
+from _ball_ import Ball
+from _panel_ import Player_Panel
 
 
 def player_move(player):
