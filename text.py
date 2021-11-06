@@ -1,13 +1,18 @@
-import pygame
-green = (0, 255, 0)
+from imports import *
+
 class Text:
     def __init__(self,screen,color,text,posx,posy,fontsize=30):
-        myfont = pygame.font.Font('slkscr.ttf', fontsize)
-        self.textsurface = myfont.render(text,False,color)
+        self.text = text
+        self.myfont = pygame.font.Font('slkscr.ttf', fontsize)
+        self.textsurface = self.myfont.render(text,False,color)
         self.screen = screen
         self.posx, self.posy = posx,posy
         w,h = self.textsurface.get_size()
         self.rect = pygame.Rect(self.posx, self.posy,w,h )
+
+
+    def update_color(self,color):
+        self.textsurface = self.myfont.render(self.text, False, color)
 
     def update(self):
 
