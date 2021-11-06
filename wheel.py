@@ -1,10 +1,13 @@
 import random
 class Wheel:
-    def __init__(self,random=False):
+    def __init__(self,random=False,computer=False):
         self.random = random
         self.states = [[-1,1],[1,-1],[-1,-1],[1,1]]
-        self.set_gen()
         self.current = 0
+        if computer:
+            self.computer_player()
+        self.set_gen()
+
 
 
     def set_gen(self):
@@ -17,7 +20,8 @@ class Wheel:
 
     def computer_player(self):
         self.states = [[1,-1],[1,1]]
-        self.set_gen()
+        self.current = random.choice(self.states)
+
     def next_state(self):
         try:
             return next(iter(self.gen))

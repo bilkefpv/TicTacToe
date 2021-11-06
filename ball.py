@@ -50,10 +50,10 @@ class Ball:
             val = 2
         if self.pos_x + self.block_size < OFFSETX + 26:
             val = 1
-        if self.pos_x + self.block_size > self.w + OFFSETX or self.pos_x < 0 + OFFSETX:
+        if self.pos_x + self.block_size >= self.w + OFFSETX or self.pos_x <= 0 + OFFSETX:
             self.velocity[0] = -self.velocity[0]
 
-        if self.pos_y + self.block_size > self.h + OFFSETY or self.pos_y < 0 + OFFSETY:
+        if self.pos_y + self.block_size >= self.h + OFFSETY or self.pos_y <= 0 + OFFSETY:
             self.velocity[1] = -self.velocity[1]
 
         self.rect = pygame.Rect(self.pos_x, self.pos_y, self.block_size, self.block_size)

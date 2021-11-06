@@ -37,13 +37,13 @@ class Pong:
 
     def start_screen(self):
         size = self.width - 40, self.height - 100
-        WHEE = Wheel(random=True)
-        ball = Ball(size, self.screen, WHEE)
+
 
         BTN_ONEPLAYER = Text(self.screen, blue, "One player", self.width // 2 - 100, self.height // 2 - 100)
         BTN_TWOPLAYERS = Text(self.screen, blue, "Two players", self.width // 2 - 100, self.height // 2 - 100 + 80)
         BTN_CHANGE_INPUT = Text(self.screen, blue, "Setup input", self.width // 2 - 100, self.height // 2 - 100 + 160)
-        buttons = [BTN_ONEPLAYER,BTN_TWOPLAYERS,BTN_CHANGE_INPUT]
+        BTN_EXIT = Text(self.screen, blue, "Exit", self.width // 2 - 100, self.height // 2 - 100 + 240)
+        buttons = [BTN_ONEPLAYER,BTN_TWOPLAYERS,BTN_CHANGE_INPUT,BTN_EXIT]
         choose = 1
         choose_text_wheel = Wheel()
         choose_text_wheel.list_indexes(buttons)
@@ -56,9 +56,7 @@ class Pong:
                 if i == choose_text_wheel.current:
                     continue
                 btn.update_color(blue)
-            BTN_ONEPLAYER.update()
-            BTN_TWOPLAYERS.update()
-            BTN_CHANGE_INPUT.update()
+            [btn.update() for btn in buttons]
             pygame.display.update()
             for event in pygame.event.get():
 
@@ -70,14 +68,22 @@ class Pong:
                     if event.key == pygame.K_DOWN:
                         choose_text_wheel.next_state()
                     if event.key == pygame.K_RETURN:
-                        if buttons[choose_text_wheel.current] == BTN_ONEPLAYER:
+                        BTN = buttons[choose_text_wheel.current]
+                        if BTN == BTN_ONEPLAYER:
                             self.oneplayer = True
-                            WHEE.computer_player()
+                            WHEE = Wheel(random=True,computer=True)
+                            ball = Ball(size, self.screen, WHEE)
                             self.play(ball)
-                        elif buttons[choose_text_wheel.current] == BTN_TWOPLAYERS:
+                        elif BTN == BTN_TWOPLAYERS:
                             self.oneplayer = False
+                            WHEE = Wheel(random=True)
+                            ball = Ball(size, self.screen, WHEE)
                             self.play(ball)
-                        elif buttons[choose_text_wheel.current] == BTN_CHANGE_INPUT:
+                        elif BTN == BTN_EXIT:
+                            pygame.quit()
+                            choose = 0
+                            break
+                        elif BTN == BTN_CHANGE_INPUT:
                             if (p := self.get_key(1, "up")) != -1:
                                 self.p1_key_up = p
                             else:
@@ -100,13 +106,20 @@ class Pong:
 
                     if BTN_ONEPLAYER.check_click(mouse_pos):
                         self.oneplayer = True
-                        WHEE.computer_player()
+                        WHEE = Wheel(random=True, computer=True)
+                        ball = Ball(size, self.screen, WHEE)
+
                         self.play(ball)
 
                     elif BTN_TWOPLAYERS.check_click(mouse_pos):
                         self.oneplayer = False
+                        WHEE = Wheel(random=True)
+                        ball = Ball(size, self.screen, WHEE)
                         self.play(ball)
-
+                    elif BTN_EXIT.check_click(mouse_pos):
+                        pygame.quit()
+                        choose = 0
+                        break
                     elif BTN_CHANGE_INPUT.check_click(mouse_pos):
                         if (p := self.get_key(1, "up")) != -1:
                             self.p1_key_up = p
