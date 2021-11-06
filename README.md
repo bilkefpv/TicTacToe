@@ -5,6 +5,6 @@ Games built for fun with pygame
 # TicTacToe
 
 
-![Screenshot](tictactoe.png)  
+![Screenshot](screenshots/tictactoe.png)  
 
-![Screenshot](tictactoe2.png)
+![Screenshot](screenshots/tictactoe2.png)
