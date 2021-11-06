@@ -24,6 +24,7 @@ def player_stop_or_other_direction(player, oppositekey, up):
 
 class Pong:
     def __init__(self):
+        pygame.display.set_caption('BILKE PONG')
         self.p1_key_up = pygame.K_e
         self.p1_key_down = pygame.K_d
         self.p2_key_up = pygame.K_o

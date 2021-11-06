@@ -10,6 +10,7 @@ blue = (0, 0, 255)
 
 class TICTACTOE:
     def __init__(self):
+        pygame.display.set_caption('BILKE TicTacToe')
         self.scoreP1 = 0
         self.scoreP2 = 0
         self.rects = set()
