@@ -1,21 +1,24 @@
-from _imports_ import *
+from games._imports_ import *
+
+
 class Ball:
     def __init__(self, size, screen, wheel):
         self.channel = pygame.mixer.find_channel(True)
         self.channel.set_volume(0.1)
 
-        self.bounce_sound = pygame.mixer.Sound("bounce.wav")
+        self.bounce_sound = pygame.mixer.Sound("sounds/bounce.wav")
         self.screen = screen
         self.w, self.h = size
         self.block_size = 13
         self.wheel = wheel
         self.restore()
-        self.audio=True
+        self.audio = True
 
     def mute(self):
         self.audio = not self.audio
+
     def restore(self):
-        velocity = [choice([a for a in np.arange(2,2.65,0.15)]), choice([a for a in np.arange(2.65,3.25,0.15)])]
+        velocity = [choice([a for a in np.arange(2, 2.65, 0.15)]), choice([a for a in np.arange(2.65, 3.25, 0.15)])]
         multiply = self.wheel.next_state()
         velocity = [v1 * v2 for v1, v2 in zip(velocity, multiply)]
         self.velocity = velocity
@@ -72,4 +75,3 @@ class Ball:
         self.velocity[0] = -self.velocity[0]
 
         self.pos_x += self.velocity[0]
-

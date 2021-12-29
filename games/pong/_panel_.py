@@ -1,4 +1,4 @@
-from _imports_ import *
+from games._imports_ import *
 
 
 class Player_Panel:

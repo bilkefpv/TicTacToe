@@ -1,6 +1,7 @@
 import pygame
 import numpy as np
 from random import choice
+import time
 white = (255, 255, 255)
 black = (0, 0, 0)
 red = (255, 0, 0)
